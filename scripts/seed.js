@@ -166,12 +166,11 @@ async function main() {
 
   console.log('Seeding finished!');
 
-  // //
   // await seedUsers(client);
   // await seedCustomers(client);
   // await seedInvoices(client);
   // await seedRevenue(client);
-  //
+
   await client.end();
 }
 
