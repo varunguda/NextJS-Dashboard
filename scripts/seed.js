@@ -20,8 +20,6 @@ async function seedUsers(client) {
       );
     `;
 
-    console.log(`Created "users" table`);
-
     // Insert data into the "users" table
     const insertedUsers = await Promise.all(
       users.map(async (user) => {
@@ -61,8 +59,6 @@ async function seedInvoices(client) {
   );
 `;
 
-    console.log(`Created "invoices" table`);
-
     // Insert data into the "invoices" table
     const insertedInvoices = await Promise.all(
       invoices.map(
@@ -100,8 +96,6 @@ async function seedCustomers(client) {
       );
     `;
 
-    console.log(`Created "customers" table`);
-
     // Insert data into the "customers" table
     const insertedCustomers = await Promise.all(
       customers.map(
@@ -135,8 +129,6 @@ async function seedRevenue(client) {
       );
     `;
 
-    console.log(`Created "revenue" table`);
-
     // Insert data into the "revenue" table
     const insertedRevenue = await Promise.all(
       revenue.map(
@@ -163,11 +155,23 @@ async function seedRevenue(client) {
 async function main() {
   const client = await db.connect();
 
-  await seedUsers(client);
-  await seedCustomers(client);
-  await seedInvoices(client);
-  await seedRevenue(client);
+  console.log('Seeding data... Please wait!');
 
+  await Promise.all([
+    seedUsers(client),
+    seedCustomers(client),
+    seedInvoices(client),
+    seedRevenue(client),
+  ]);
+
+  console.log('Seeding finished!');
+
+  // //
+  // await seedUsers(client);
+  // await seedCustomers(client);
+  // await seedInvoices(client);
+  // await seedRevenue(client);
+  //
   await client.end();
 }
 
