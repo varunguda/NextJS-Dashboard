@@ -134,7 +134,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
         </fieldset>
 
         {/* Missing fields error */}
-        {state.errors &&
+        {/* state.errors &&
           Object.keys(state.errors).reduce(
             (acc: number, field: string): number => {
               return (
@@ -149,7 +149,11 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
             <p className="mt-2 text-sm text-red-600">
               Missing fields. Failed to create invoice.
             </p>
-          )}
+          ) */}
+
+        {state.message && (
+          <p className="mt-2 text-sm text-red-600">{state.message}</p>
+        )}
       </div>
 
       <div className="mt-6 flex justify-end gap-4">

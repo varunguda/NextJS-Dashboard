@@ -4,6 +4,26 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { signIn } from "@/auth"
+import { AuthError } from 'next-auth';
+
+
+export async function authenticate(prevState: string | undefined, formData: FormData){
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if(error instanceof AuthError){
+      switch(error.type){
+        case 'CredentialsSignin': 
+          return "Invalid credentials."
+        default: 
+          return "Something went wrong!"
+      }
+    }
+    throw error;
+  }
+}
+
 
 const FormSchema = z.object({
   id: z.string(),
@@ -63,7 +83,24 @@ export async function createInvoice(prevState: State, formData: FormData) {
 }
 
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
-export async function updateInvoice(id: string, formData: FormData) {
+export async function updateInvoice(
+  id: string,
+  prevState: State,
+  formData: FormData,
+) {
+  const validateFields = UpdateInvoice.safeParse({
+    customerId: formData.get('customerId'),
+    status: formData.get('status'),
+    amount: formData.get('amount'),
+  });
+
+  if (!validateFields.success) {
+    return {
+      errors: validateFields.error.flatten().fieldErrors,
+      message: 'Missing fields, failed to edit an invoice.',
+    };
+  }
+
   const { customerId, status, amount } = UpdateInvoice.parse(
     Object.fromEntries(formData.entries()),
   );
@@ -87,7 +124,6 @@ export async function updateInvoice(id: string, formData: FormData) {
 
 export async function deleteInvoice(id: string) {
   // throw new Error('Failed deleting an invoice!');
-
   try {
     await sql`
     DELETE FROM invoices WHERE id = ${id}
