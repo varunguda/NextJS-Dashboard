@@ -104,8 +104,8 @@ export async function fetchFilteredInvoices(
   try {
     const invoices = await sql<InvoicesTable>`
       SELECT
-        invoices.id,
         invoices.amount,
+        invoices.id,
         invoices.date,
         invoices.status,
         customers.name,
